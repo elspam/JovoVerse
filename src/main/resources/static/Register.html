@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - JovoVerse</title>
+    <title>Register - JovoVerse</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -14,18 +14,21 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow-lg border-0 rounded-4">
                     <div class="card-header bg-purple text-white text-center py-4 rounded-top-4">
-                        <i class="fas fa-user-circle fs-1 mb-3"></i>
-                        <h2 class="mb-1">Welcome Back</h2>
-                        <p class="mb-0 opacity-75">Sign in to your account</p>
+                        <i class="fas fa-user-plus fs-1 mb-3"></i>
+                        <h2 class="mb-1">Create Account</h2>
+                        <p class="mb-0 opacity-75">Join JovoVerse today</p>
                     </div>
                     <div class="card-body p-4">
                         <div id="successAlert" class="alert alert-success d-none" role="alert">
-                            Registrasi berhasil! Silakan login.
+                            Akun berhasil dibuat! Silakan login.
                         </div>
-                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
-                            Username atau password salah!
+                        <div id="userExistsAlert" class="alert alert-danger d-none" role="alert">
+                            Username sudah digunakan. Silakan coba yang lain.
                         </div>
-                        <form action="/login" method="post">
+                        <div id="emptyFieldAlert" class="alert alert-warning d-none" role="alert">
+                            Harap isi semua kolom sebelum submit.
+                        </div>
+                        <form action="/register" method="post">
                             <div class="input-group mb-3">
                                 <span class="input-group-text bg-light border-end-0 rounded-start-3">
                                     <i class="fas fa-user text-purple"></i>
@@ -47,16 +50,16 @@
                             </div>
                             
                             <button type="submit" class="btn btn-purple w-100 py-3 mb-3 rounded-3 text-white fw-semibold">
-                                <i class="fas fa-sign-in-alt me-2"></i>
-                                Sign In
+                                <i class="fas fa-user-plus me-2"></i>
+                                Create Account
                             </button>
                         </form>
                         
                         <div class="text-center">
-                            <p class="mb-0">Don't have an account? 
-                                <a href="Register.html" class="text-purple text-decoration-none fw-bold">
-                                    <i class="fas fa-user-plus me-1"></i>
-                                    Create Account
+                            <p class="mb-0">Already have an account? 
+                                <a href="login.html" class="text-purple text-decoration-none fw-bold">
+                                    <i class="fas fa-sign-in-alt me-1"></i>
+                                    Sign In
                                 </a>
                             </p>
                         </div>
@@ -68,5 +71,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="js/scriptRegist.js"></script>
+
 </body>
 </html>

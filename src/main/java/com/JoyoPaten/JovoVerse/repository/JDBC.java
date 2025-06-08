@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Connection;
 
 public class JDBC {
-    private static final String URL = "jdbc:mysql://localhost:3307/joyo_verse?serverTimezone=UTC&useSSL=false";
+    private static final String URL = "jdbc:mysql://localhost:3307/joyo_verse";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 

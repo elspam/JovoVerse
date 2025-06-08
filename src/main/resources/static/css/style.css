@@ -1,0 +1,13 @@
+.bg-purple {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7) !important;
+}
+.text-purple {
+    color: #8b5cf6 !important;
+}
+.btn-purple {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7) !important;
+    border: none !important;
+}
+.btn-purple:hover {
+    background: linear-gradient(135deg, #7c3aed, #9333ea) !important;
+}

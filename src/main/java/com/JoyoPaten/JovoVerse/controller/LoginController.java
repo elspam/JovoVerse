@@ -21,7 +21,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginPage() {
-        return "redirect:/Login.html?success=true";
+        return "redirect:/Login.html";
     }
 
     @GetMapping("/register") // Tambahkan ini untuk halaman register

@@ -19,15 +19,15 @@ public class itemLibraryRepository {
             conn.setAutoCommit(false);
 
             // Insert into item_library
-            String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, status, cover) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, cover,stok) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(itemSql)) {
                 stmt.setString(1, item.getIdItem());
                 stmt.setString(2, item.getJudul());
                 stmt.setInt(3, item.getTahunTerbit());
                 stmt.setString(4, item.getPenulis());
                 stmt.setInt(5, item.getHalaman());
-                stmt.setBoolean(6, item.getDipinjam());
-                stmt.setString(7, item.getCover());
+                stmt.setString(6, item.getCover());
+                stmt.setInt(7, item.getStok());
                 stmt.executeUpdate();
             }
 
@@ -129,8 +129,8 @@ public class itemLibraryRepository {
                     data.getTahunTerbit(),
                     data.getPenulis(),
                     data.getHalaman(),
-                    data.getDipinjam(),
                     data.getCover(),
+                    data.getStok(),
                     rs.getString("isbn")
                 );
             }
@@ -151,8 +151,8 @@ public class itemLibraryRepository {
                     data.getTahunTerbit(),
                     data.getPenulis(),
                     data.getHalaman(),
-                    data.getDipinjam(),
                     data.getCover(),
+                    data.getStok(),
                     rs.getInt("volume"),
                     rs.getInt("no_edisi"),
                     rs.getString("issn")
@@ -179,8 +179,8 @@ public class itemLibraryRepository {
                 item.setTahunTerbit(rs.getInt("tahun_terbit"));
                 item.setPenulis(rs.getString("penulis"));
                 item.setHalaman(rs.getInt("halaman"));
-                item.setDipinjam(rs.getBoolean("status"));
                 item.setCover(rs.getString("cover")); // Penting
+                item.setStok(rs.getInt("stok"));
 
                 return item;
             }
@@ -189,7 +189,7 @@ public class itemLibraryRepository {
     }
 
     public boolean update(itemLibrary item) {
-        String updateItemSql = "UPDATE item_library SET judul=?, tahun_terbit=?, penulis=?, halaman=?, status=?, cover=? WHERE id_item=?";
+        String updateItemSql = "UPDATE item_library SET judul=?, tahun_terbit=?, penulis=?, halaman=?, cover=?, stok=? WHERE id_item=?";
         try (Connection conn = JDBC.getConnection()) {
             conn.setAutoCommit(false);
 
@@ -199,8 +199,8 @@ public class itemLibraryRepository {
                 stmt.setInt(2, item.getTahunTerbit());
                 stmt.setString(3, item.getPenulis());
                 stmt.setInt(4, item.getHalaman());
-                stmt.setBoolean(5, item.getDipinjam());
-                stmt.setString(6, item.getCover());
+                stmt.setString(5, item.getCover());
+                stmt.setInt(6, item.getStok());
                 stmt.setString(7, item.getIdItem());
                 stmt.executeUpdate();
             }

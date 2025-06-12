@@ -6,21 +6,21 @@ public abstract class itemLibrary {
     protected Integer tahunTerbit;
     protected String penulis;
     protected Integer halaman;
-    protected Boolean status;
     protected String cover;
+    protected Integer stok;
     
     // Constructors
     public itemLibrary() {}
     
     public itemLibrary(String idItem, String judul, Integer tahunTerbit, 
-                      String penulis, Integer halaman, Boolean status, String cover) {
+                      String penulis, Integer halaman, String cover,Integer stok) {
         this.idItem = idItem;
         this.judul = judul;
         this.tahunTerbit = tahunTerbit;
         this.penulis = penulis;
         this.halaman = halaman;
-        this.status = status;
         this.cover = cover;
+        this.stok = stok;
     }
     
     // Getters & Setters
@@ -39,16 +39,17 @@ public abstract class itemLibrary {
     public Integer getHalaman() { return halaman; }
     public void setHalaman(Integer halaman) { this.halaman = halaman; }
     
-    public Boolean getDipinjam() { return status; }
-    public void setDipinjam(Boolean dipinjam) { this.status = dipinjam; }
-
+    
     public String getCover() {
         return cover;
     }
-
+    
     public void setCover(String cover) {
         this.cover = cover;
     }
+    
+    public Integer getStok() { return stok; }
+    public void setStok(Integer stok) { this.stok = stok; }
     
     // Abstract method - harus diimplementasi oleh child classes
     public abstract String getInfo();

@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.springframework.ui.Model;
 
 @RestController
 @RequestMapping("/items")
@@ -57,8 +58,8 @@ public class ItemLibraryController {
             String coverUrl = "/cover/" + fileName;
 
             Buku buku = new Buku(
-                    idItem, judul, tahunTerbit, penulis, halaman,
-                    coverUrl,stok, isbn
+                    idItem, judul, tahunTerbit, penulis, halaman, coverUrl,
+                    stok, isbn
             );
             return adminUser.save(buku);
 
@@ -103,8 +104,8 @@ public class ItemLibraryController {
             String coverUrl = "/cover/" + fileName;
 
             Jurnal jurnal = new Jurnal(
-                    idItem, judul, tahunTerbit, penulis, halaman,
-                    coverUrl, stok, volume, noEdisi, issn
+                    idItem, judul, tahunTerbit, penulis, halaman, coverUrl, 
+                    stok, volume, noEdisi, issn
             );
             boolean saved = adminUser.save(jurnal);
             if (saved) {
@@ -216,8 +217,8 @@ public class ItemLibraryController {
                 coverUrl = "/cover/" + fileName;
             }
 
-            Jurnal updated = new Jurnal(idItem, judul, tahunTerbit, penulis, halaman,
-                    coverUrl,stok, volume, noEdisi, issn);
+            Jurnal updated = new Jurnal(idItem, judul, tahunTerbit, penulis, halaman, coverUrl,
+                    stok, volume, noEdisi, issn);
 
             return adminUser.update(updated);
 

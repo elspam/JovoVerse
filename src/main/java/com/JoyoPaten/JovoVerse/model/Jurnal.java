@@ -6,7 +6,7 @@ public class Jurnal extends itemLibrary {
     private String issn;
     
     public Jurnal(String idItem, String judul, Integer tahunTerbit, String penulis, 
-                  Integer halaman,String cover,Integer stok, Integer volume, Integer noEdisi, String issn) {
+                  Integer halaman, String cover,Integer stok, Integer volume, Integer noEdisi, String issn) {
         super(idItem, judul, tahunTerbit, penulis, halaman, cover, stok);
         this.volume = volume;
         this.noEdisi = noEdisi;
@@ -27,7 +27,7 @@ public class Jurnal extends itemLibrary {
     @Override
     public String getInfo() {
         return String.format(
-            "JURNAL - ID: %s | Judul: %s | Penulis: %s | Tahun: %d | ISSN: %s | Vol: %d | Ed: %d | Halaman: %d | Stok: %d",
+            "JURNAL - ID: %s | Judul: %s | Penulis: %s | Tahun: %d | ISSN: %s | Vol: %d | Ed: %d | Halaman: %d | Stok: %s",
             idItem != null ? idItem : "N/A",
             judul != null ? judul : "N/A",
             penulis != null ? penulis : "N/A", 
@@ -36,7 +36,7 @@ public class Jurnal extends itemLibrary {
             volume != null ? volume : 0,
             noEdisi != null ? noEdisi : 0,
             halaman != null ? halaman : 0,
-            stok != null ? stok : "N/A"
+            stok != 0 ? stok : "N/A"
         );
     }
     
@@ -48,6 +48,7 @@ public class Jurnal extends itemLibrary {
                 ", issn='" + issn + '\'' +
                 ", volume=" + volume +
                 ", noEdisi=" + noEdisi +
+                ", stok=" + stok +
                 ", stok=" + stok +
                 '}';
     }

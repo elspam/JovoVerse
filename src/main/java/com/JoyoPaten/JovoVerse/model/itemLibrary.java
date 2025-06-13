@@ -6,19 +6,21 @@ public abstract class itemLibrary {
     protected Integer tahunTerbit;
     protected String penulis;
     protected Integer halaman;
+    protected int stok;
     protected String cover;
-    protected Integer stok;
+   
     
     // Constructors
     public itemLibrary() {}
     
     public itemLibrary(String idItem, String judul, Integer tahunTerbit, 
-                      String penulis, Integer halaman, String cover,Integer stok) {
+                      String penulis, Integer halaman, String cover, int stok) {
         this.idItem = idItem;
         this.judul = judul;
         this.tahunTerbit = tahunTerbit;
         this.penulis = penulis;
         this.halaman = halaman;
+        this.stok = stok;
         this.cover = cover;
         this.stok = stok;
     }
@@ -38,7 +40,6 @@ public abstract class itemLibrary {
     
     public Integer getHalaman() { return halaman; }
     public void setHalaman(Integer halaman) { this.halaman = halaman; }
-    
     
     public String getCover() {
         return cover;

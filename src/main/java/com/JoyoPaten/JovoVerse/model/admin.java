@@ -19,13 +19,15 @@ public class admin extends user {
             conn.setAutoCommit(false);
 
             // Insert into item_library
-            String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, cover,stok) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, cover, stok) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(itemSql)) {
                 stmt.setString(1, item.getIdItem());
                 stmt.setString(2, item.getJudul());
                 stmt.setInt(3, item.getTahunTerbit());
                 stmt.setString(4, item.getPenulis());
                 stmt.setInt(5, item.getHalaman());
+                stmt.setString(6, item.getCover());
+                stmt.setInt(7, item.getStok());
                 stmt.setString(6, item.getCover());
                 stmt.setInt(7, item.getStok());
                 stmt.executeUpdate();
@@ -59,7 +61,7 @@ public class admin extends user {
     }
 
     public boolean update(itemLibrary item) {
-        String updateItemSql = "UPDATE item_library SET judul=?, tahun_terbit=?, penulis=?, halaman=?, cover=?, stok=? WHERE id_item=?";
+        String updateItemSql = "UPDATE item_library SET judul=?, tahun_terbit=?, penulis=?, halaman=?, stok=?, cover=? WHERE id_item=?";
         try (Connection conn = JDBC.getConnection()) {
             conn.setAutoCommit(false);
 
@@ -69,8 +71,8 @@ public class admin extends user {
                 stmt.setInt(2, item.getTahunTerbit());
                 stmt.setString(3, item.getPenulis());
                 stmt.setInt(4, item.getHalaman());
-                stmt.setString(5, item.getCover());
-                stmt.setInt(6, item.getStok());
+                stmt.setInt(5, item.getStok());
+                stmt.setString(6, item.getCover());
                 stmt.setString(7, item.getIdItem());
                 stmt.executeUpdate();
             }

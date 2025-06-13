@@ -4,8 +4,8 @@ public class Buku extends itemLibrary {
      private String isbn;
     
     public Buku(String idItem, String judul, Integer tahunTerbit, 
-                String penulis, Integer halaman,String cover,Integer stok, String isbn) {
-        super(idItem, judul, tahunTerbit, penulis, halaman,cover,stok);
+                String penulis, Integer halaman, String cover,Integer stok, String isbn) {
+        super(idItem, judul, tahunTerbit, penulis, halaman, cover, stok);
         this.isbn = isbn;
     }
     
@@ -15,18 +15,18 @@ public class Buku extends itemLibrary {
     
     // Implementation of abstract method getInfo()
     @Override
-    public String getInfo() {
-        return String.format(
-            "BUKU - ID: %s | Judul: %s | Penulis: %s | Tahun: %d | ISBN: %s | Halaman: %d | Stok: %d",
-            idItem != null ? idItem : "N/A",
-            judul != null ? judul : "N/A", 
-            penulis != null ? penulis : "N/A",
-            tahunTerbit != null ? tahunTerbit : 0,
-            isbn != null ? isbn : "N/A",
-            halaman != null ? halaman : 0,
-            stok != null ? stok : "N/A"
-        );
-    }
+   public String getInfo() {
+    return String.format(
+        "BUKU - ID: %s | Judul: %s | Penulis: %s | Tahun: %d | ISBN: %s | Halaman: %d | Stok: %d",
+        getIdItem() != null ? getIdItem() : "N/A",
+        getJudul() != null ? getJudul() : "N/A", 
+        getPenulis() != null ? getPenulis() : "N/A",
+        getTahunTerbit() != null ? getTahunTerbit() : 0,
+        isbn != null ? isbn : "N/A",
+        getHalaman() != null ? getHalaman() : 0,
+        getStok()
+    );
+}
     
     @Override
     public String toString() {
@@ -34,6 +34,7 @@ public class Buku extends itemLibrary {
                 "idItem='" + idItem + '\'' +
                 ", judul='" + judul + '\'' +
                 ", isbn='" + isbn + '\'' +
+                ", stok=" + stok +
                 ", stok=" + stok +
                 '}';
     }

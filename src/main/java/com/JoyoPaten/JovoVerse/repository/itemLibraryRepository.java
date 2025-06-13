@@ -158,7 +158,6 @@ public class itemLibraryRepository {
                     data.getHalaman(),
                     data.getCover(),
                     data.getStok(),
-                    data.getStok(),
                     rs.getString("isbn")
                 );
             }
@@ -183,7 +182,6 @@ public class itemLibraryRepository {
                     data.getPenulis(),
                     data.getHalaman(),
                     data.getCover(),
-                    data.getStok(),
                     data.getStok(),
                     rs.getInt("volume"),
                     rs.getInt("no_edisi"),

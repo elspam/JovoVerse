@@ -8,7 +8,7 @@ public abstract class itemLibrary {
     protected Integer halaman;
     protected int stok;
     protected String cover;
-    protected Integer stok;
+   
     
     // Constructors
     public itemLibrary() {}
@@ -41,9 +41,6 @@ public abstract class itemLibrary {
     public Integer getHalaman() { return halaman; }
     public void setHalaman(Integer halaman) { this.halaman = halaman; }
     
-    public int getStok() { return stok; }
-    public void setStok(int stok) { this.stok = stok; }
-
     public String getCover() {
         return cover;
     }

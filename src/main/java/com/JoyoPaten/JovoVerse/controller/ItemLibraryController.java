@@ -32,7 +32,6 @@ public class ItemLibraryController {
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
             @RequestParam("stok") int stok,
-            @RequestParam("stok") int stok,
             @RequestParam("isbn") String isbn,
             @RequestParam("cover") MultipartFile cover
     ) {
@@ -71,7 +70,6 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
-            @RequestParam("stok") int stok,
             @RequestParam("stok") int stok,
             @RequestParam("issn") String issn,
             @RequestParam("volume") int volume,
@@ -120,7 +118,6 @@ public class ItemLibraryController {
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
             @RequestParam("stok") int stok,
-            @RequestParam("stok") int stok,
             @RequestParam("isbn") String isbn,
             @RequestParam(value = "cover", required = false) MultipartFile cover // optional
     ) {
@@ -165,7 +162,6 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
-            @RequestParam("stok") int stok,
             @RequestParam("stok") int stok,
             @RequestParam("issn") String issn,
             @RequestParam("volume") int volume,

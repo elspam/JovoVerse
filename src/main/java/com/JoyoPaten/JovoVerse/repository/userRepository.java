@@ -8,23 +8,25 @@ import java.sql.*;
 public class userRepository {
 
     public boolean save(user user) {
-        String sql = "INSERT INTO users (username, password, role, denda) VALUES (?, ?, ?, ?)";
-        try (Connection conn = JDBC.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+    try (Connection conn = JDBC.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPassword());
-            stmt.setInt(3, user.getRole());
-            stmt.setDouble(4, user.getDenda());
+        System.out.println("[DEBUG] Koneksi berhasil: " + (conn != null)); // Debug
+        stmt.setString(1, user.getUsername());
+        stmt.setString(2, user.getPassword());
+        stmt.setInt(3, user.getRole());
 
-            int affected = stmt.executeUpdate();
-            return affected > 0;
+        int affected = stmt.executeUpdate();
+        System.out.println("[DEBUG] Rows affected: " + affected);
+        return affected > 0;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    } catch (SQLException e) {
+        System.out.println("[ERROR] Gagal insert user:");
+        e.printStackTrace();
+        return false;
     }
+}
 
     public user findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
@@ -38,8 +40,7 @@ public class userRepository {
                 return new user(
                     rs.getString("username"),
                     rs.getString("password"),
-                    rs.getInt("role"),
-                    rs.getDouble("denda")
+                    rs.getInt("role")
                 );
             }
 

@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@RestController
 @RequestMapping("/items")
 public class ItemLibraryController {
 

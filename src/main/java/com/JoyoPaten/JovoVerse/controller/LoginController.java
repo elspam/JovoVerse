@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.JoyoPaten.JovoVerse.model.user;
 import com.JoyoPaten.JovoVerse.repository.userRepository; // Sesuaikan nama repository
@@ -48,7 +47,7 @@ public class LoginController {
         }
 
         if (userRepo.findByUsername(username) == null) {
-            userRepo.save(new user(username, password, 0, 0.0));
+            userRepo.save(new user(username, password, 0));
             return "redirect:/login?success=true"; // Registrasi berhasil, redirect ke login
         } else {
             return "redirect:/register?error=userexists"; // Username sudah digunakan

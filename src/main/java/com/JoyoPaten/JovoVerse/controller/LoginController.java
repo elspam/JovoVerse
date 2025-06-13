@@ -70,7 +70,7 @@ public class LoginController {
         }
 
         if (userRepo.findByUsername(username) == null) {
-            userRepo.save(new user(username, password, 0, 0.0));
+            userRepo.save(new user(username, password, 0));
             return "redirect:/login?success=true"; // Registrasi berhasil, redirect ke login
         } else {
             return "redirect:/register?error=userexists"; // Username sudah digunakan

@@ -8,6 +8,7 @@ public abstract class itemLibrary {
     protected Integer halaman;
     protected int stok;
     protected String cover;
+    protected Integer stok;
     
     // Constructors
     public itemLibrary() {}
@@ -21,6 +22,7 @@ public abstract class itemLibrary {
         this.halaman = halaman;
         this.stok = stok;
         this.cover = cover;
+        this.stok = stok;
     }
     
     // Getters & Setters
@@ -45,10 +47,13 @@ public abstract class itemLibrary {
     public String getCover() {
         return cover;
     }
-
+    
     public void setCover(String cover) {
         this.cover = cover;
     }
+    
+    public Integer getStok() { return stok; }
+    public void setStok(Integer stok) { this.stok = stok; }
     
     // Abstract method - harus diimplementasi oleh child classes
     public abstract String getInfo();

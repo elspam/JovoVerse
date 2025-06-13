@@ -52,6 +52,7 @@ public class Jurnal extends itemLibrary {
                 ", volume=" + volume +
                 ", noEdisi=" + noEdisi +
                 ", stok=" + stok +
+                ", stok=" + stok +
                 '}';
     }
 }

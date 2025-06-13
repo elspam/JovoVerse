@@ -4,14 +4,12 @@ public class user {
     private String username;
     private String password;
     private int role;     // 1 = admin, 0 = user
-    private double denda; // bisa juga pakai BigDecimal kalau butuh presisi tinggi
 
     // Constructor
-    public user(String username, String password, int role, double denda) {
+    public user(String username, String password, int role) {
         this.username = username;
         this.password = password;
         this.role = role; // default user
-        this.denda = denda;
     }
 
     // Login method (hanya contoh, validasi biasanya di controller atau repository)
@@ -42,13 +40,5 @@ public class user {
 
     public void setRole(int role) {
         this.role = role;
-    }
-
-    public double getDenda() {
-        return denda;
-    }
-
-    public void setDenda(double denda) {
-        this.denda = denda;
     }
 }

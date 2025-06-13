@@ -38,6 +38,7 @@ public class Buku extends itemLibrary {
                 ", judul='" + judul + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", stok=" + stok +
+                ", stok=" + stok +
                 '}';
     }
 }

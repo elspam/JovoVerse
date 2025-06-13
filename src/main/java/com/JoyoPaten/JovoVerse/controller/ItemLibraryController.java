@@ -6,6 +6,7 @@ import com.JoyoPaten.JovoVerse.model.itemLibrary;
 import com.JoyoPaten.JovoVerse.repository.itemLibraryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import org.springframework.ui.Model;
 
-@RestController
 @RequestMapping("/items")
 public class ItemLibraryController {
 
@@ -31,6 +31,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
+            @RequestParam("stok") int stok,
             @RequestParam("stok") int stok,
             @RequestParam("isbn") String isbn,
             @RequestParam("cover") MultipartFile cover
@@ -64,12 +65,13 @@ public class ItemLibraryController {
 
     // Tambah jurnal (dengan file cover)
     @PostMapping(value = "/jurnal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public boolean addJurnal(
+    public ResponseEntity<String> addJurnal(
             @RequestParam("idItem") String idItem,
             @RequestParam("judul") String judul,
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
+            @RequestParam("stok") int stok,
             @RequestParam("stok") int stok,
             @RequestParam("issn") String issn,
             @RequestParam("volume") int volume,
@@ -77,23 +79,17 @@ public class ItemLibraryController {
             @RequestParam("cover") MultipartFile cover
     ) {
         try {
-            // Menggunakan System.getProperty untuk mendapatkan direktori project
             String projectDir = System.getProperty("user.dir");
             Path coverPath = Paths.get(projectDir, "src", "main", "resources", "static", "cover");
-            
-            // Buat direktori jika belum ada
+
             if (!Files.exists(coverPath)) {
                 Files.createDirectories(coverPath);
             }
 
-            // Buat nama file unik
             String fileName = System.currentTimeMillis() + "_" + cover.getOriginalFilename();
             Path filePath = coverPath.resolve(fileName);
 
-            // Simpan file
             Files.copy(cover.getInputStream(), filePath);
-
-            // Simpan path relatif untuk database (untuk akses web)
             String coverUrl = "/cover/" + fileName;
 
             Jurnal jurnal = new Jurnal(
@@ -101,13 +97,20 @@ public class ItemLibraryController {
                     stok, volume, noEdisi, issn
             );
 
-            return repo.save(jurnal);
+            boolean saved = repo.save(jurnal);
+            if (saved) {
+                return ResponseEntity.ok("Berhasil menambahkan jurnal!");
+            } else {
+                return ResponseEntity.status(500).body("Gagal menyimpan ke database.");
+            }
 
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            return ResponseEntity.status(500).body("Terjadi error saat upload cover: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error umum: " + e.getMessage());
         }
     }
+
 
     @PutMapping(value = "/buku/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public boolean updateBuku(
@@ -116,6 +119,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
+            @RequestParam("stok") int stok,
             @RequestParam("stok") int stok,
             @RequestParam("isbn") String isbn,
             @RequestParam(value = "cover", required = false) MultipartFile cover // optional
@@ -161,6 +165,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
+            @RequestParam("stok") int stok,
             @RequestParam("stok") int stok,
             @RequestParam("issn") String issn,
             @RequestParam("volume") int volume,

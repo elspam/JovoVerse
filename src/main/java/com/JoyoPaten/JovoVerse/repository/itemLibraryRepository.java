@@ -28,6 +28,8 @@ public class itemLibraryRepository {
                 stmt.setInt(5, item.getHalaman());
                 stmt.setString(6, item.getCover());
                 stmt.setInt(7, item.getStok());
+                stmt.setString(6, item.getCover());
+                stmt.setInt(7, item.getStok());
                 stmt.executeUpdate();
             }
 
@@ -156,6 +158,7 @@ public class itemLibraryRepository {
                     data.getHalaman(),
                     data.getCover(),
                     data.getStok(),
+                    data.getStok(),
                     rs.getString("isbn")
                 );
             }
@@ -180,6 +183,7 @@ public class itemLibraryRepository {
                     data.getPenulis(),
                     data.getHalaman(),
                     data.getCover(),
+                    data.getStok(),
                     data.getStok(),
                     rs.getInt("volume"),
                     rs.getInt("no_edisi"),
@@ -210,6 +214,7 @@ public class itemLibraryRepository {
                 item.setHalaman(rs.getInt("halaman"));
                 item.setStok(rs.getInt("stok"));
                 item.setCover(rs.getString("cover")); // Penting
+                item.setStok(rs.getInt("stok"));
 
                 return item;
             }

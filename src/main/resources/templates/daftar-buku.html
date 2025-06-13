@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard}">
+<head>
+    <title layout:title="daftar-buku">Dashboard Daftar Buku</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <!-- DAFTAR BUKU SECTION -->
+            <div id="daftar-buku" class="content-section">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="mb-4">📖 Daftar Buku</h2>
+                        <div class="mb-3">
+                            <form th:action="@{/search-item}" method="post" class="mb-3" style="max-width: 300px;">
+                                <div class="input-group">
+                                    <input type="text" name="keyword" class="form-control" placeholder="🔍 Cari item...">
+                                    <button class="btn btn-primary" type="submit">Cari</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-4" th:each="item : ${itemList}">
+                        <div class="card book-card">
+                            <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=250&fit=crop" class="card-img-top book-image" alt="Clean Code">
+                            <div class="card-body">
+                                <h6 class="card-title" th:text="${item.judul}">Clean Code</h6>
+                                <p class="card-text small" th:text="${item.penulis}">Robert C. Martin</p>
+                                <p class="card-text small text-muted">Stok: <span th:text="${item.stok}">0</span></p>
+                                <button class="btn btn-primary btn-sm w-100">Pinjam Buku</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </section>
+
+</body>

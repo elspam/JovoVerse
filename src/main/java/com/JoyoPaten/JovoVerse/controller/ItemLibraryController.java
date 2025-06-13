@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.springframework.ui.Model;
 
 @RestController
 @RequestMapping("/items")
@@ -30,7 +31,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
-            @RequestParam("dipinjam") boolean dipinjam,
+            @RequestParam("stok") int stok,
             @RequestParam("isbn") String isbn,
             @RequestParam("cover") MultipartFile cover
     ) {
@@ -49,8 +50,8 @@ public class ItemLibraryController {
             String coverUrl = "/cover/" + fileName;
 
             Buku buku = new Buku(
-                    idItem, judul, tahunTerbit, penulis, halaman, dipinjam,
-                    coverUrl, isbn
+                    idItem, judul, tahunTerbit, penulis, halaman, coverUrl,
+                    stok, isbn
             );
 
             return repo.save(buku);
@@ -69,7 +70,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
-            @RequestParam("dipinjam") boolean dipinjam,
+            @RequestParam("stok") int stok,
             @RequestParam("issn") String issn,
             @RequestParam("volume") int volume,
             @RequestParam("noEdisi") int noEdisi,
@@ -96,8 +97,8 @@ public class ItemLibraryController {
             String coverUrl = "/cover/" + fileName;
 
             Jurnal jurnal = new Jurnal(
-                    idItem, judul, tahunTerbit, penulis, halaman, dipinjam, 
-                    coverUrl, volume, noEdisi, issn
+                    idItem, judul, tahunTerbit, penulis, halaman, coverUrl, 
+                    stok, volume, noEdisi, issn
             );
 
             return repo.save(jurnal);
@@ -115,7 +116,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
-            @RequestParam("dipinjam") boolean dipinjam,
+            @RequestParam("stok") int stok,
             @RequestParam("isbn") String isbn,
             @RequestParam(value = "cover", required = false) MultipartFile cover // optional
     ) {
@@ -144,7 +145,7 @@ public class ItemLibraryController {
                 coverUrl = "/cover/" + fileName;
             }
 
-            Buku updated = new Buku(idItem, judul, tahunTerbit, penulis, halaman, dipinjam, coverUrl, isbn);
+            Buku updated = new Buku(idItem, judul, tahunTerbit, penulis, halaman, coverUrl,stok , isbn);
             return repo.update(updated);
 
         } catch (IOException e) {
@@ -160,7 +161,7 @@ public class ItemLibraryController {
             @RequestParam("tahunTerbit") int tahunTerbit,
             @RequestParam("penulis") String penulis,
             @RequestParam("halaman") int halaman,
-            @RequestParam("dipinjam") boolean dipinjam,
+            @RequestParam("stok") int stok,
             @RequestParam("issn") String issn,
             @RequestParam("volume") int volume,
             @RequestParam("noEdisi") int noEdisi,
@@ -189,8 +190,8 @@ public class ItemLibraryController {
                 coverUrl = "/cover/" + fileName;
             }
 
-            Jurnal updated = new Jurnal(idItem, judul, tahunTerbit, penulis, halaman, dipinjam,
-                    coverUrl, volume, noEdisi, issn);
+            Jurnal updated = new Jurnal(idItem, judul, tahunTerbit, penulis, halaman, coverUrl,
+                    stok, volume, noEdisi, issn);
 
             return repo.update(updated);
 
@@ -201,10 +202,11 @@ public class ItemLibraryController {
     }
 
     // Ambil semua item
-    @GetMapping
-    public List<itemLibrary> getAllItems() {
-        return repo.findAll();
-    }
+    // @GetMapping("/buku")
+    // public List<itemLibrary> daftarBukuPage() {
+    //     List<itemLibrary> itemlist = repo.findAll();
+    //     return itemlist;
+    // }
 
     // Ambil item berdasarkan ID
     @GetMapping("/{id}")

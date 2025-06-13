@@ -19,15 +19,15 @@ public class itemLibraryRepository {
             conn.setAutoCommit(false);
 
             // Insert into item_library
-            String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, status, cover) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, cover, stok) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(itemSql)) {
                 stmt.setString(1, item.getIdItem());
                 stmt.setString(2, item.getJudul());
                 stmt.setInt(3, item.getTahunTerbit());
                 stmt.setString(4, item.getPenulis());
                 stmt.setInt(5, item.getHalaman());
-                stmt.setBoolean(6, item.getDipinjam());
-                stmt.setString(7, item.getCover());
+                stmt.setString(6, item.getCover());
+                stmt.setInt(7, item.getStok());
                 stmt.executeUpdate();
             }
 
@@ -72,6 +72,31 @@ public class itemLibraryRepository {
                 if (buku != null) return buku;
 
                 // Cek jurnal
+                Jurnal jurnal = findJurnalById(conn, id);
+                if (jurnal != null) return jurnal;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public itemLibrary findByTitle(String judul) {
+        String sql = "SELECT * FROM item_library WHERE judul = ?";
+        try (Connection conn = JDBC.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, judul);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String id = rs.getString("id_item"); // ✅ Ambil id_item, bukan judul
+
+                Buku buku = findBukuById(conn, id);
+                if (buku != null) return buku;
+
                 Jurnal jurnal = findJurnalById(conn, id);
                 if (jurnal != null) return jurnal;
             }
@@ -129,14 +154,17 @@ public class itemLibraryRepository {
                     data.getTahunTerbit(),
                     data.getPenulis(),
                     data.getHalaman(),
-                    data.getDipinjam(),
                     data.getCover(),
+                    data.getStok(),
                     rs.getString("isbn")
                 );
             }
         }
         return null;
     }
+
+   
+
 
     private Jurnal findJurnalById(Connection conn, String id) throws SQLException {
         String sql = "SELECT * FROM jurnal WHERE id_item = ?";
@@ -151,8 +179,8 @@ public class itemLibraryRepository {
                     data.getTahunTerbit(),
                     data.getPenulis(),
                     data.getHalaman(),
-                    data.getDipinjam(),
                     data.getCover(),
+                    data.getStok(),
                     rs.getInt("volume"),
                     rs.getInt("no_edisi"),
                     rs.getString("issn")
@@ -162,6 +190,7 @@ public class itemLibraryRepository {
         return null;
     }
 
+     
     private itemLibrary getItemData(Connection conn, String id) throws SQLException {
         String sql = "SELECT * FROM item_library WHERE id_item = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -179,7 +208,7 @@ public class itemLibraryRepository {
                 item.setTahunTerbit(rs.getInt("tahun_terbit"));
                 item.setPenulis(rs.getString("penulis"));
                 item.setHalaman(rs.getInt("halaman"));
-                item.setDipinjam(rs.getBoolean("status"));
+                item.setStok(rs.getInt("stok"));
                 item.setCover(rs.getString("cover")); // Penting
 
                 return item;
@@ -189,7 +218,7 @@ public class itemLibraryRepository {
     }
 
     public boolean update(itemLibrary item) {
-        String updateItemSql = "UPDATE item_library SET judul=?, tahun_terbit=?, penulis=?, halaman=?, status=?, cover=? WHERE id_item=?";
+        String updateItemSql = "UPDATE item_library SET judul=?, tahun_terbit=?, penulis=?, halaman=?, stok=?, cover=? WHERE id_item=?";
         try (Connection conn = JDBC.getConnection()) {
             conn.setAutoCommit(false);
 
@@ -199,7 +228,7 @@ public class itemLibraryRepository {
                 stmt.setInt(2, item.getTahunTerbit());
                 stmt.setString(3, item.getPenulis());
                 stmt.setInt(4, item.getHalaman());
-                stmt.setBoolean(5, item.getDipinjam());
+                stmt.setInt(5, item.getStok());
                 stmt.setString(6, item.getCover());
                 stmt.setString(7, item.getIdItem());
                 stmt.executeUpdate();

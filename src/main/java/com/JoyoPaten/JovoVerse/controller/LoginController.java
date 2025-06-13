@@ -5,10 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+
+
 
 import com.JoyoPaten.JovoVerse.model.user;
-import com.JoyoPaten.JovoVerse.repository.userRepository; // Sesuaikan nama repository
+import com.JoyoPaten.JovoVerse.repository.userRepository;
+
 
 import jakarta.servlet.http.HttpSession;
 
@@ -16,17 +19,17 @@ import jakarta.servlet.http.HttpSession;
 public class LoginController {
     
     @Autowired
-    private userRepository userRepo; // Inject repository
-    
-
+    private userRepository userRepo;
+   
+ 
     @GetMapping("/login")
     public String loginPage() {
-        return "redirect:/Login.html";
+        return "Login"; // Ganti dengan nama file HTML yang sesuai
     }
 
     @GetMapping("/register") // Tambahkan ini untuk halaman register
     public String registerPage() {
-        return "redirect:/Register.html";
+        return "Register";
     }
     
 
@@ -35,10 +38,29 @@ public class LoginController {
                         @RequestParam String password,
                         HttpSession session) {
         if (userRepo.validate(username, password)) {
-            session.setAttribute("user", username);
-            return "redirect:/dashboard.html";
+            user u = userRepo.findByUsername(username);
+            session.setAttribute("user", u);
+            return "redirect:/dashboard";
         }
-        return "redirect:/Login?error=true";
+        return "redirect:/login?error=true";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        // Cek apakah user sudah login
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("username", session.getAttribute("user"));
+        return "home"; // Ini mengarah ke home.html di templates/
+    }
+
+  
+
+    @GetMapping("/home")
+    public String homePage() {
+        return "home";
     }
 
     @PostMapping("/register")

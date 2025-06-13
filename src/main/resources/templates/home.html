@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard}">
+<head>
+    <title layout:title="Home">Dashboard Home</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <!-- HOME SECTION -->
+            <div id="home" class="content-section active">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="mb-4">🏠 Dashboard Home</h2>
+                    </div>
+                </div>
+
+                <!-- User Profile Card -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card stats-card p-4 text-center">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="User Avatar" class="user-avatar mx-auto mb-3">
+                            <h4>John Doe</h4>
+                            <p class="mb-1">📧 john.doe@email.com</p>
+                            <p class="mb-1">🎓 Mahasiswa Informatika</p>
+                            <p class="mb-0">📱 +62 812-3456-7890</p>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card text-center p-3" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                                    <h3 class="text-white mb-1">12</h3>
+                                    <p class="text-white mb-0">Total Buku Dipinjam</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card text-center p-3" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+                                    <h3 class="text-white mb-1">3</h3>
+                                    <p class="text-white mb-0">Sedang Dipinjam</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card text-center p-3" style="background: linear-gradient(135deg, #dc3545, #e83e8c);">
+                                    <h3 class="text-white mb-1">1</h3>
+                                    <p class="text-white mb-0">Terlambat</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Borrowing History -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">📚 Riwayat Peminjaman Terbaru</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Judul Buku</th>
+                                                <th>Tanggal Pinjam</th>
+                                                <th>Tanggal Kembali</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Clean Code: A Handbook of Agile Software Craftsmanship</td>
+                                                <td>2025-05-15</td>
+                                                <td>2025-06-15</td>
+                                                <td><span class="badge bg-warning">Sedang Dipinjam</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>The Pragmatic Programmer</td>
+                                                <td>2025-05-10</td>
+                                                <td>2025-06-10</td>
+                                                <td><span class="badge bg-danger">Terlambat</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Design Patterns</td>
+                                                <td>2025-04-20</td>
+                                                <td>2025-05-20</td>
+                                                <td><span class="badge bg-success">Dikembalikan</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>JavaScript: The Good Parts</td>
+                                                <td>2025-04-15</td>
+                                                <td>2025-05-15</td>
+                                                <td><span class="badge bg-success">Dikembalikan</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+    </section>
+</body>

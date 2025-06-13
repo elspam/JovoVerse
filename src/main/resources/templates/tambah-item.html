@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard}">
+<head>
+    <title layout:title="tambah-item">Dashboard Tambah Item</title>
+    <style>
+        .form-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-control {
+            margin-bottom: 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="col-md-10 p-4">
+        <section layout:fragment="content">
+            <div class="form-section">
+                <h2>Tambah Item</h2>
+                    <form th:action="@{/save}" method="post">
+                        <div class="form-group">
+                                <label for="id_item">ID Item</label>
+                                <input type="text" class="form-control" id="id_item" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="judul">Judul</label>
+                                <input type="text" class="form-control" id="judul" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="penulis">Penulis</label>
+                                <input type="text" class="form-control" id="penulis" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="tahunTerbit">Tahun Terbit</label>
+                                <input type="number" class="form-control" id="tahunTerbit" min="0" max="2025" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="jumlahHalaman">Jumlah Halaman</label>
+                                <input type="number" class="form-control" id="jumlahHalaman" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="cover">Cover (img file)</label>
+                                <input type="file" class="form-control" id="cover" accept="image/*" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="stok">Stok</label>
+                                <input type="number" class="form-control" id="stok" required>
+                        </div>
+                        <div class="form-group">
+                                <label for="itemType">Tipe Item</label>
+                                <select class="form-control" id="itemType" onchange="toggleAdditionalFields()" required> 
+                                    <option value="">Pilih Tipe</option>
+                                    <option value="buku">Buku</option>
+                                    <option value="jurnal">Jurnal</option>
+                                </select>
+                        </div>
+                        <div id="additionalFields" style="display:none;">
+                            <div class="form-group" id="isbnField" style="display:none;">
+                                    <label for="isbn">ISBN</label>
+                                    <input type="text" class="form-control" id="isbn">
+                            </div>
+                            <div class="form-group" id="volumeField" style="display:none;">
+                                    <label for="volume">Volume</label>
+                                    <input type="text" class="form-control" id="volume">
+                            </div>
+                            <div class="form-group" id="issnField" style="display:none;">
+                                    <label for="issn">ISSN</label>
+                                    <input type="text" class="form-control" id="issn">
+                            </div>
+                            <div class="form-group" id="edisiField" style="display:none;">
+                                    <label for="edisi">Edisi</label>
+                                    <input type="number" class="form-control" id="edisi">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Item</button>
+                    </form>        
+                </div>
+        </section>
+    </div>
+</body>

@@ -21,15 +21,26 @@ public class LoginController {
     public String loginPage() {
         return "Login"; // Ganti dengan nama file HTML login Anda
     }
-    @GetMapping("/dashboard")
+
+
+   @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         // Cek apakah user sudah login
-        if (session.getAttribute("user") == null) {    
+        user user = (user) session.getAttribute("user");
+        if (user == null) {
             return "redirect:/login";
         }
+        model.addAttribute("username", user.getUsername()); 
+        if (user.getRole() == 1) {
+            return "tambah-item";
+        } else {
+            return "home";
+        }
+    }
 
-        model.addAttribute("username", session.getAttribute("user"));
-        return "home"; // Ini mengarah ke home.html di templates/
+    @GetMapping("/home")
+    public String homePage() {
+        return "home";
     }
 
     @GetMapping("/register") // Tambahkan ini untuk halaman register

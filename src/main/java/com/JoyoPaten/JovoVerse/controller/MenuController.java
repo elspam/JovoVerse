@@ -13,6 +13,8 @@ import java.util.List;
 import com.JoyoPaten.JovoVerse.model.itemLibrary;
 import com.JoyoPaten.JovoVerse.model.user;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class MenuController {
     @Autowired
@@ -43,5 +45,37 @@ public class MenuController {
         model.addAttribute("page", "daftar-buku");
         return "daftar-buku";
     }
+
+    @GetMapping("/tambah-item")
+    public String showTambahItemForm(HttpSession session) {
+        // Pastikan user sudah login dan role = 1
+        user user = (user) session.getAttribute("user");
+        if (user == null || user.getRole() != 1) {
+            return "redirect:/login"; // atau unauthorized page
+        }
+        return "tambah-item"; // file src/main/resources/templates/tambah-item.html
+    }
+
+    @GetMapping("/edit-item")
+    public String showEditItemForm(HttpSession session, Model model) {
+        user user = (user) session.getAttribute("user");
+        if (user == null || user.getRole() != 1) {
+            return "redirect:/login";
+        }
+        List<itemLibrary> itemList = user.findAll();
+        model.addAttribute("itemList", itemList);
+        model.addAttribute("page", "daftar-buku");
+        return "daftar-buku";
+    }
+
+    @GetMapping("/acc-peminjaman")
+    public String showAccPeminjaman(HttpSession session) {
+        user user = (user) session.getAttribute("user");
+        if (user == null || user.getRole() != 1) {
+            return "redirect:/login";
+        }
+        return "acc-peminjaman";
+    }
+
 
 }

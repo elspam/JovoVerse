@@ -85,17 +85,19 @@
     <div class="row">
         <!-- Sidebar -->
         <div class="col-md-2 sidebar text-white">
+            <!-- User Menu -->
             <div class="pt-3" th:if="${session.user.role == 0}">
                 <a th:href="@{/home}" class="menu-item active" data-target="home">🏠 Home</a>
                 <a th:href="@{/daftar-buku}" class="menu-item" th:classappend="${page == 'daftar-buku'} ? ' active'" data-target="daftar-buku">📖 Daftar Buku</a>
                 <a th:href="@{/rak-buku}" class="menu-item" th:classappend="${page == 'rak-buku'} ? ' active'" data-target="rak-buku">📚 Rak Buku</a>
             </div>
 
+            <!-- Admin Menu -->
             <div th:if="${session.user.role == 1}">
                 <hr/>
-                <a th:href="@{/admin/tambah-item}" class="menu-item">➕ Tambah Item</a>
-                <a th:href="@{/admin/lihat-item}" class="menu-item">📂 Lihat Item</a>
-                <a th:href="@{/admin/}acc-peminjaman" class="menu-item">✅ ACC Peminjaman</a>
+                <a th:href="@{/tambah-item}" class="menu-item">➕ Tambah Item</a>
+                <a th:href="@{/edit-item}" class="menu-item">📂 Edit Item</a>
+                <a th:href="@{/acc-peminjaman}" class="menu-item">✅ ACC Peminjaman</a>
             </div>
         </div>
 
@@ -160,6 +162,32 @@
             });
         }
     });
+
+    
+    
+    function toggleAdditionalFields() {
+            const itemType = document.getElementById('itemType').value;
+            document.getElementById('additionalFields').style.display = 'block';
+            document.getElementById('isbnField').style.display = itemType === 'buku' ? 'block' : 'none';
+            document.getElementById('volumeField').style.display = itemType === 'jurnal' ? 'block' : 'none';
+            document.getElementById('issnField').style.display = itemType === 'jurnal' ? 'block' : 'none';
+            document.getElementById('edisiField').style.display = itemType === 'jurnal' ? 'block' : 'none';
+    }
+
+    function approveLoan(bookTitle) {
+        if (confirm(`Apakah Anda yakin ingin meng-ACC peminjaman buku "${bookTitle}"?`)) {
+            alert(`Peminjaman buku "${bookTitle}" berhasil di-ACC!`);
+            // Di sini Anda biasanya akan melakukan panggilan API untuk meng-ACC peminjaman
+        }
+    }
+
+    function rejectLoan(bookTitle) {
+        if (confirm(`Apakah Anda yakin ingin menolak peminjaman buku "${bookTitle}"?`)) {
+            alert(`Peminjaman buku "${bookTitle}" telah ditolak.`);
+            // Di sini Anda biasanya akan melakukan panggilan API untuk menolak peminjaman
+        }
+    }
+    
 </script>
 
 </body>

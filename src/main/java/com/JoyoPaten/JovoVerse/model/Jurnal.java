@@ -5,9 +5,6 @@ public class Jurnal extends itemLibrary {
     private Integer noEdisi;
     private String issn;
     
-    // Constructors
-    public Jurnal() {}
-    
     public Jurnal(String idItem, String judul, Integer tahunTerbit, String penulis, 
                   Integer halaman,String cover,Integer stok, Integer volume, Integer noEdisi, String issn) {
         super(idItem, judul, tahunTerbit, penulis, halaman, cover, stok);

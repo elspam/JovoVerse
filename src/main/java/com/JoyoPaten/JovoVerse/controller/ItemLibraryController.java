@@ -1,9 +1,12 @@
 package com.JoyoPaten.JovoVerse.controller;
 
 import com.JoyoPaten.JovoVerse.model.Buku;
+import com.JoyoPaten.JovoVerse.model.admin;
 import com.JoyoPaten.JovoVerse.model.Jurnal;
 import com.JoyoPaten.JovoVerse.model.itemLibrary;
-import com.JoyoPaten.JovoVerse.repository.itemLibraryRepository;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +20,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+@RestController
 @RequestMapping("/items")
 public class ItemLibraryController {
-
-    @Autowired
-    private itemLibraryRepository repo;
-
+    
     @PostMapping(value = "/buku", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public boolean addBuku(
+            HttpSession session,
             @RequestParam("idItem") String idItem,
             @RequestParam("judul") String judul,
             @RequestParam("tahunTerbit") int tahunTerbit,
@@ -34,6 +36,12 @@ public class ItemLibraryController {
             @RequestParam("isbn") String isbn,
             @RequestParam("cover") MultipartFile cover
     ) {
+        Object userObj = session.getAttribute("user");
+        if (!(userObj instanceof admin)) {
+            return false; // Bukan admin, tidak boleh tambah buku
+        }
+        admin adminUser = (admin) userObj;
+
         try {
             String projectDir = System.getProperty("user.dir");
             Path coverPath = Paths.get(projectDir, "src", "main", "resources", "static", "cover");
@@ -52,8 +60,7 @@ public class ItemLibraryController {
                     idItem, judul, tahunTerbit, penulis, halaman,
                     coverUrl,stok, isbn
             );
-
-            return repo.save(buku);
+            return adminUser.save(buku);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,6 +71,7 @@ public class ItemLibraryController {
     // Tambah jurnal (dengan file cover)
     @PostMapping(value = "/jurnal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addJurnal(
+            HttpSession session,
             @RequestParam("idItem") String idItem,
             @RequestParam("judul") String judul,
             @RequestParam("tahunTerbit") int tahunTerbit,
@@ -75,6 +83,11 @@ public class ItemLibraryController {
             @RequestParam("noEdisi") int noEdisi,
             @RequestParam("cover") MultipartFile cover
     ) {
+        Object userObj = session.getAttribute("user");
+        if (!(userObj instanceof admin)) {
+            return ResponseEntity.status(403).body("Akses ditolak: Hanya admin yang boleh menambahkan jurnal."); // Bukan admin, tidak boleh tambah buku
+        }
+        admin adminUser = (admin) userObj;
         try {
             String projectDir = System.getProperty("user.dir");
             Path coverPath = Paths.get(projectDir, "src", "main", "resources", "static", "cover");
@@ -93,8 +106,7 @@ public class ItemLibraryController {
                     idItem, judul, tahunTerbit, penulis, halaman,
                     coverUrl, stok, volume, noEdisi, issn
             );
-
-            boolean saved = repo.save(jurnal);
+            boolean saved = adminUser.save(jurnal);
             if (saved) {
                 return ResponseEntity.ok("Berhasil menambahkan jurnal!");
             } else {
@@ -111,6 +123,7 @@ public class ItemLibraryController {
 
     @PutMapping(value = "/buku/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public boolean updateBuku(
+            HttpSession session,
             @PathVariable("id") String idItem,
             @RequestParam("judul") String judul,
             @RequestParam("tahunTerbit") int tahunTerbit,
@@ -120,7 +133,13 @@ public class ItemLibraryController {
             @RequestParam("isbn") String isbn,
             @RequestParam(value = "cover", required = false) MultipartFile cover // optional
     ) {
-        Buku existing = (Buku) repo.findById(idItem);
+        Object userObj = session.getAttribute("user");
+        if (!(userObj instanceof admin)) {
+            return false; // Bukan admin, tidak boleh tambah buku
+        }
+        admin adminUser = (admin) userObj;
+
+        Buku existing = (Buku) adminUser.findById(idItem);
         if (existing == null) return false;
 
         String coverUrl = existing.getCover();
@@ -146,7 +165,7 @@ public class ItemLibraryController {
             }
 
             Buku updated = new Buku(idItem, judul, tahunTerbit, penulis, halaman, coverUrl,stok, isbn);
-            return repo.update(updated);
+            return adminUser.update(updated);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,6 +175,7 @@ public class ItemLibraryController {
 
     @PutMapping(value = "/jurnal/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public boolean updateJurnal(
+            HttpSession session,
             @PathVariable("id") String idItem,
             @RequestParam("judul") String judul,
             @RequestParam("tahunTerbit") int tahunTerbit,
@@ -167,7 +187,13 @@ public class ItemLibraryController {
             @RequestParam("noEdisi") int noEdisi,
             @RequestParam(value = "cover", required = false) MultipartFile cover
     ) {
-        Jurnal existing = (Jurnal) repo.findById(idItem);
+        Object userObj = session.getAttribute("user");
+        if (!(userObj instanceof admin)) {
+            return false; // Bukan admin, tidak boleh tambah buku
+        }
+        admin adminUser = (admin) userObj;
+
+        Jurnal existing = (Jurnal) adminUser.findById(idItem);
         if (existing == null) return false;
 
         String coverUrl = existing.getCover();
@@ -193,7 +219,7 @@ public class ItemLibraryController {
             Jurnal updated = new Jurnal(idItem, judul, tahunTerbit, penulis, halaman,
                     coverUrl,stok, volume, noEdisi, issn);
 
-            return repo.update(updated);
+            return adminUser.update(updated);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,20 +229,46 @@ public class ItemLibraryController {
 
     // Ambil semua item
     @GetMapping
-    public List<itemLibrary> getAllItems() {
-        return repo.findAll();
+    public ResponseEntity<?> getAllItems(HttpSession session) {
+        Object userObj = session.getAttribute("user");
+
+        if (!(userObj instanceof admin)) {
+            return ResponseEntity.status(403).body("Akses ditolak: Hanya admin yang boleh melihat semua item.");
+        }
+
+        admin adminUser = (admin) userObj;
+        List<itemLibrary> items = adminUser.findAll();
+        return ResponseEntity.ok(items);
     }
 
     // Ambil item berdasarkan ID
     @GetMapping("/{id}")
-    public itemLibrary getItemById(@PathVariable String id) {
-        return repo.findById(id);
+    public ResponseEntity<?> getItemById(@PathVariable String id, HttpSession session) {
+        Object userObj = session.getAttribute("user");
+
+        if (!(userObj instanceof admin)) {
+            return ResponseEntity.status(403).body("Akses ditolak: hanya admin yang bisa melihat item.");
+        }
+
+        admin adminUser = (admin) userObj;
+        itemLibrary item = adminUser.findById(id);
+
+        if (item == null) {
+            return ResponseEntity.status(404).body("Item dengan ID " + id + " tidak ditemukan.");
+        }
+
+        return ResponseEntity.ok(item);
     }
 
     // Hapus item + file cover-nya kalau ada
     @DeleteMapping("/{id}")
-    public boolean deleteItem(@PathVariable String id) {
-        itemLibrary item = repo.findById(id);
+    public boolean deleteItem(@PathVariable String id,HttpSession session) {
+        Object userObj = session.getAttribute("user");
+        if (!(userObj instanceof admin)) {
+            return false; // Bukan admin, tidak boleh tambah buku
+        }
+        admin adminUser = (admin) userObj;
+        itemLibrary item = adminUser.findById(id);
         if (item == null) return false;
 
         // Hapus file cover (kalau ada dan path-nya dari /cover/)
@@ -232,6 +284,6 @@ public class ItemLibraryController {
             }
         }
 
-        return repo.delete(id);
+        return adminUser.delete(id);
     }
 }

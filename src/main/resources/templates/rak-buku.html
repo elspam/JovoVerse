@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard}">
+<head>
+    <title layout:title="rak-buku">Dashboard Rak Buku</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+         <!-- RAK BUKU SECTION -->
+            <div id="rak-buku" class="content-section">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="mb-4">📚 Rak Buku Saya</h2>
+                        <p class="text-muted">Kelola buku yang sedang Anda pinjam dan riwayat peminjaman</p>
+                    </div>
+                </div>
+
+                <!-- Currently Borrowed Books -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">📚 Buku Sedang Dipinjam</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-warning position-relative">
+                                            <span class="badge bg-warning status-badge">Sedang Dipinjam</span>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=80&h=100&fit=crop" class="img-fluid" alt="Clean Code">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <h6 class="card-title">Clean Code</h6>
+                                                        <p class="card-text small">Robert C. Martin</p>
+                                                        <p class="card-text small"><strong>Tgl Pinjam:</strong> 15 Mei 2025</p>
+                                                        <p class="card-text small"><strong>Tgl Kembali:</strong> 15 Juni 2025</p>
+                                                        <p class="card-text small text-success"><strong>Sisa Hari:</strong> 7 hari</p>
+                                                        <div class="d-flex gap-2">
+                                                            <button class="btn btn-success btn-sm" onclick="extendBook('Clean Code')">🔄 Perpanjang</button>
+                                                            <button class="btn btn-primary btn-sm" onclick="returnBook('Clean Code')">↩️ Kembalikan</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-danger position-relative">
+                                            <span class="badge bg-danger status-badge">Terlambat</span>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=80&h=100&fit=crop" class="img-fluid" alt="The Pragmatic Programmer">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <h6 class="card-title">The Pragmatic Programmer</h6>
+                                                        <p class="card-text small">David Thomas</p>
+                                                        <p class="card-text small"><strong>Tgl Pinjam:</strong> 10 Mei 2025</p>
+                                                        <p class="card-text small"><strong>Tgl Kembali:</strong> 10 Juni 2025</p>
+                                                        <p class="card-text small text-danger"><strong>Terlambat:</strong> 2 hari</p>
+                                                        <div class="d-flex gap-2">
+                                                            <button class="btn btn-warning btn-sm" onclick="payFine('The Pragmatic Programmer')">💰 Bayar Denda</button>
+                                                            <button class="btn btn-primary btn-sm" onclick="returnBook('The Pragmatic Programmer')">↩️ Kembalikan</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Borrowing History -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">📋 Riwayat Peminjaman</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Buku</th>
+                                                <th>Tanggal Pinjam</th>
+                                                <th>Tanggal Kembali</th>
+                                                <th>Tanggal Dikembalikan</th>
+                                                <th>Status</th>
+                                                <th>Denda</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=40&h=50&fit=crop" class="me-2" alt="Design Patterns">
+                                                        <div>
+                                                            <strong>Design Patterns</strong><br>
+                                                            <small class="text-muted">Gang of Four</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>20 Apr 2025</td>
+                                                <td>20 Mei 2025</td>
+                                                <td>18 Mei 2025</td>
+                                                <td><span class="badge bg-success">Dikembalikan</span></td>
+                                                <td>Rp 0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=50&fit=crop" class="me-2" alt="JavaScript">
+                                                        <div>
+                                                            <strong>JavaScript: The Good Parts</strong><br>
+                                                            <small class="text-muted">Douglas Crockford</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>15 Apr 2025</td>
+                                                <td>15 Mei 2025</td>
+                                                <td>16 Mei 2025</td>
+                                                <td><span class="badge bg-warning">Terlambat 1 hari</span></td>
+                                                <td>Rp 5,000</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=40&h=50&fit=crop" class="me-2" alt="Algorithms">
+                                                        <div>
+                                                            <strong>Introduction to Algorithms</strong><br>
+                                                            <small class="text-muted">Thomas H. Cormen</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>10 Apr 2025</td>
+                                                <td>10 Mei 2025</td>
+                                                <td>08 Mei 2025</td>
+                                                <td><span class="badge bg-success">Dikembalikan</span></td>
+                                                <td>Rp 0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+</body>

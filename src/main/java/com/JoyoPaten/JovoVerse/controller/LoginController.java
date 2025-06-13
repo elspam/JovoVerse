@@ -1,31 +1,40 @@
 package com.JoyoPaten.JovoVerse.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
 
-import com.JoyoPaten.JovoVerse.model.user;
-import com.JoyoPaten.JovoVerse.repository.userRepository; // Sesuaikan nama repository
+import com.JoyoPaten.JovoVerse.model.admin;
+import com.JoyoPaten.JovoVerse.model.peminjam;
+import com.JoyoPaten.JovoVerse.model.user; // Sesuaikan nama repository
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
     
-    @Autowired
-    private userRepository userRepo; // Inject repository
+    private user user; // Inject repository
     
-
     @GetMapping("/login")
     public String loginPage() {
-        return "redirect:/Login.html";
+        return "Login"; // Ganti dengan nama file HTML login Anda
+    }
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        // Cek apakah user sudah login
+        if (session.getAttribute("user") == null) {    
+            return "redirect:/login";
+        }
+
+        model.addAttribute("username", session.getAttribute("user"));
+        return "home"; // Ini mengarah ke home.html di templates/
     }
 
     @GetMapping("/register") // Tambahkan ini untuk halaman register
     public String registerPage() {
-        return "redirect:/Register.html";
+        return "register";
     }
     
 
@@ -33,10 +42,20 @@ public class LoginController {
     public String login(@RequestParam String username,
                         @RequestParam String password,
                         HttpSession session) {
-        if (userRepo.validate(username, password)) {
-            session.setAttribute("user", username);
-            return "redirect:/dashboard.html";
+        user u = user.findByUsername(username); // Ambil data dari DB
+
+        if (u != null && u.getPassword().equals(password)) {
+            // Cek role, bikin instance sesuai role
+            if (u.getRole() == 1) {
+                admin adminUser = new admin(u.getUsername(), u.getPassword());
+                session.setAttribute("user", adminUser);
+            } else {
+                peminjam peminjamUser = new peminjam(u.getUsername(), u.getPassword());
+                session.setAttribute("user", peminjamUser);
+            }
+            return "redirect:/dashboard";
         }
+
         return "redirect:/Login?error=true";
     }
 
@@ -46,8 +65,8 @@ public class LoginController {
             return "redirect:/register?error=empty";
         }
 
-        if (userRepo.findByUsername(username) == null) {
-            userRepo.save(new user(username, password, 0));
+        if (user.findByUsername(username) == null) {
+            user.save(new user(username, password, 0));
             return "redirect:/login?success=true"; // Registrasi berhasil, redirect ke login
         } else {
             return "redirect:/register?error=userexists"; // Username sudah digunakan

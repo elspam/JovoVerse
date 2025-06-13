@@ -3,9 +3,6 @@ package com.JoyoPaten.JovoVerse.model;
 public class Buku extends itemLibrary {
      private String isbn;
     
-    // Constructors
-    public Buku() {}
-    
     public Buku(String idItem, String judul, Integer tahunTerbit, 
                 String penulis, Integer halaman,String cover,Integer stok, String isbn) {
         super(idItem, judul, tahunTerbit, penulis, halaman,cover,stok);

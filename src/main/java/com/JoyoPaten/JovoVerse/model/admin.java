@@ -1,18 +1,18 @@
-package com.JoyoPaten.JovoVerse.repository;
+package com.JoyoPaten.JovoVerse.model;
 
-import com.JoyoPaten.JovoVerse.model.Buku;
-import com.JoyoPaten.JovoVerse.model.Jurnal;
-import com.JoyoPaten.JovoVerse.model.itemLibrary;
-import org.springframework.stereotype.Repository;
+import com.JoyoPaten.JovoVerse.repository.JDBC;
 
+import java.io.File;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 
+public class admin extends user {
 
-@Repository
-public class itemLibraryRepository {
+    public admin(String username, String password) {
+        super(username, password, 1); // 1 menandakan role admin
+    }
 
     public boolean save(itemLibrary item) {
         try (Connection conn = JDBC.getConnection()) {
@@ -56,136 +56,6 @@ public class itemLibraryRepository {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public itemLibrary findById(String id) {
-        String sql = "SELECT * FROM item_library WHERE id_item = ?";
-        try (Connection conn = JDBC.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                // Cek apakah ada di buku
-                Buku buku = findBukuById(conn, id);
-                if (buku != null) return buku;
-
-                // Cek jurnal
-                Jurnal jurnal = findJurnalById(conn, id);
-                if (jurnal != null) return jurnal;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public List<itemLibrary> findAll() {
-        List<itemLibrary> items = new ArrayList<>();
-        String sql = "SELECT * FROM item_library";
-
-        try (Connection conn = JDBC.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                String id = rs.getString("id_item");
-
-                // Deteksi apakah item ini buku atau jurnal
-                Buku buku = findBukuById(conn, id);
-                if (buku != null) {
-                    items.add(buku);
-                    continue;
-                }
-
-                Jurnal jurnal = findJurnalById(conn, id);
-                if (jurnal != null) {
-                    items.add(jurnal);
-                    continue;
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return items;
-    }
-
-    private Buku findBukuById(Connection conn, String id) throws SQLException {
-        String sql = "SELECT * FROM buku WHERE id_item = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                // Ambil dari item_library juga
-                itemLibrary data = getItemData(conn, id);
-                return new Buku(
-                    data.getIdItem(),
-                    data.getJudul(),
-                    data.getTahunTerbit(),
-                    data.getPenulis(),
-                    data.getHalaman(),
-                    data.getCover(),
-                    data.getStok(),
-                    rs.getString("isbn")
-                );
-            }
-        }
-        return null;
-    }
-
-    private Jurnal findJurnalById(Connection conn, String id) throws SQLException {
-        String sql = "SELECT * FROM jurnal WHERE id_item = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                itemLibrary data = getItemData(conn, id);
-                return new Jurnal(
-                    data.getIdItem(),
-                    data.getJudul(),
-                    data.getTahunTerbit(),
-                    data.getPenulis(),
-                    data.getHalaman(),
-                    data.getCover(),
-                    data.getStok(),
-                    rs.getInt("volume"),
-                    rs.getInt("no_edisi"),
-                    rs.getString("issn")
-                );
-            }
-        }
-        return null;
-    }
-
-    private itemLibrary getItemData(Connection conn, String id) throws SQLException {
-        String sql = "SELECT * FROM item_library WHERE id_item = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                itemLibrary item = new itemLibrary() {
-                    @Override
-                    public String getInfo() {
-                        return "Base item";
-                    }
-                };
-                item.setIdItem(rs.getString("id_item"));
-                item.setJudul(rs.getString("judul"));
-                item.setTahunTerbit(rs.getInt("tahun_terbit"));
-                item.setPenulis(rs.getString("penulis"));
-                item.setHalaman(rs.getInt("halaman"));
-                item.setCover(rs.getString("cover")); // Penting
-                item.setStok(rs.getInt("stok"));
-
-                return item;
-            }
-        }
-        return null;
     }
 
     public boolean update(itemLibrary item) {
@@ -232,8 +102,6 @@ public class itemLibraryRepository {
         }
     }
 
-
-
     public boolean delete(String id) {
         try (Connection conn = JDBC.getConnection()) {
             conn.setAutoCommit(false);
@@ -272,5 +140,89 @@ public class itemLibraryRepository {
             return false;
         }
     }
+
+    public List<Transaksi> findAll1() {
+        List<Transaksi> list = new ArrayList<>();
+        String sql = "SELECT * FROM transaksi";
+        try (Connection conn = JDBC.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new Transaksi(
+                    rs.getString("username"),
+                    rs.getString("id_item"),
+                    rs.getDate("tanggalPinjam"),
+                    rs.getDate("tanggalKembali"),
+                    rs.getDate("deadline"),
+                    rs.getInt("denda"),
+                    rs.getInt("status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public boolean updateKembali(String username, String idItem, Date deadline) {
+        String sql = "UPDATE transaksi SET tanggalKembali = ?, status = ?, denda = ? WHERE username = ? AND id_item = ?";
+        try (Connection conn = JDBC.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // Ambil tanggal hari ini sebagai tanggal kembali
+            Date kembali = new Date(System.currentTimeMillis());
+
+            // Hitung selisih hari
+            long millisSelisih = kembali.getTime() - deadline.getTime();
+            long hariSelisih = millisSelisih / (1000 * 60 * 60 * 24);
+
+            // Hitung denda (jika telat)
+            int denda = (hariSelisih > 0) ? (int) hariSelisih * 1000 : 0;
+
+            // Status 2 = tepat waktu, 3 = terlambat
+            int status = (hariSelisih > 0) ? 3 : 2;
+
+            // Isi parameter query
+            stmt.setDate(1, kembali);
+            stmt.setInt(2, status);
+            stmt.setInt(3, denda);
+            stmt.setString(4, username);
+            stmt.setString(5, idItem);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean updateStatus(String username, String idItem) {
+        String sql = "UPDATE transaksi SET tanggalPinjam = ?, deadline = ?, status = ? WHERE username = ? AND id_item = ?";
+        try (Connection conn = JDBC.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                // Tanggal pinjam adalah hari ini
+                LocalDate pinjam = LocalDate.now();
+
+                // Deadline = pinjam + 7 hari
+                LocalDate deadline = pinjam.plusDays(7);
+
+                // Konversi ke java.sql.Date
+                Date sqlPinjam = Date.valueOf(pinjam);
+                Date sqlDeadline = Date.valueOf(deadline);
+
+                stmt.setDate(1, sqlPinjam);
+                stmt.setDate(2, sqlDeadline);
+                stmt.setInt(3, 1);
+                stmt.setString(4, username);
+                stmt.setString(5, idItem);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 
 }

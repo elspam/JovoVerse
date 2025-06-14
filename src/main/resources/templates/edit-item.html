@@ -3,42 +3,85 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{dashboard}">
 <head>
-    <title layout:title="daftar-buku">Dashboard Edit Item</title>
+    <title>Manajemen Item</title>
+    <style>
+        .item-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+        .img-wrapper {
+            position: relative;
+            height: 250px;
+        }
+        .item-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        .delete-btn:hover {
+            background-color: rgba(220, 53, 69, 1);
+        }
+    </style>
 </head>
 
 <body>
     <section layout:fragment="content">
-        <!-- DAFTAR ITEM -->
-            <div id="daftar-item" class="content-section">
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h2 class="mb-4">📖 Daftar Item</h2>
-                        <div class="mb-3">
-                            <form th:action="@{/search-item}" method="post" class="mb-3" style="max-width: 300px;">
-                                <div class="input-group">
-                                    <input type="text" name="keyword" class="form-control" placeholder="🔍 Cari item...">
-                                    <button class="btn btn-primary" type="submit">Cari</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+        <h2 class="mb-4"><i class="fa-solid fa-edit"></i> Manajemen Item Perpustakaan</h2>
 
-                <div class="row">
-                    <div class="col-md-3 mb-4" th:each="item : ${itemList}">
-                        <div class="card book-card">
-                            <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=250&fit=crop" class="card-img-top book-image" alt="Clean Code">
-                            <div class="card-body">
-                                <h6 class="card-title" th:text="${item.judul}"></h6>
-                                <p class="card-text small">Penulis : <span th:text="${item.penulis}"></span></p>
-                                <p class="card-text small text-muted">Stok: <span th:text="${item.stok}">0</span></p>
-                                <button class="btn btn-primary btn-sm w-100">Edit Item</button>
-                            </div>
-                        </div>
-                    </div>
+        <div th:if="${param.error == 'notfound'}" class="alert alert-danger">
+            Item yang ingin diedit tidak ditemukan.
+        </div>
 
+        <div class="row">
+            <div th:if="${#lists.isEmpty(itemList)}" class="col-12">
+                <div class="alert alert-info text-center">
+                    Belum ada item di perpustakaan. Tambahkan melalui menu "Tambah Item".
                 </div>
             </div>
-    </section>
 
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="item : ${itemList}">
+                <div class="card item-card shadow-sm">
+                    <div class="img-wrapper">
+                        <img th:src="${item.cover != null ? item.cover : '/default-cover.jpg'}" class="card-img-top item-cover" alt="Cover">
+                        <button class="delete-btn btn-delete" 
+                                th:data-item-id="${item.idItem}" 
+                                th:data-item-title="${item.judul}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title fw-bold" th:text="${item.judul}">Judul Item</h6>
+                        <p class="card-text small text-muted mb-2" th:text="${item.penulis}">Penulis</p>
+                        <div class="mt-auto">
+                            <a th:href="${#strings.startsWith(item.idItem, 'B')} ? @{/edit-buku/{id}(id=${item.idItem})} : @{/edit-jurnal/{id}(id=${item.idItem})}" 
+                               class="btn btn-sm w-100 text-white" style="background-color: var(--primary-color);">
+                                <i class="fas fa-pencil-alt me-1"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
+</html>

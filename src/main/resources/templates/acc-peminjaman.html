@@ -3,22 +3,68 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{dashboard}">
 <head>
-    <title layout:title="daftar-buku">Dashboard ACC Peminjaman</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persetujuan Peminjaman</title>
 </head>
-
 <body>
-    <div class="col-md-10 p-4">
-            <section layout:fragment="content">
-                <h2>Daftar Peminjaman</h2>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Buku: Judul Buku 1</h5>
-                        <p class="card-text">Peminjam: Nama Peminjam</p>
-                        <button class="btn btn-success" onclick="approveLoan('Judul Buku 1')">✅ ACC</button>
-                        <button class="btn btn-danger" onclick="rejectLoan('Judul Buku 1')">❌ Tolak</button>
-                    </div>
+<section layout:fragment="content">
+    <div class="container-fluid">
+        <h2 class="mb-4"><i class="fa-solid fa-check-to-slot me-2"></i> Persetujuan Peminjaman</h2>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Item yang Dipinjam</th>
+                                <th scope="col">Peminjam</th>
+                                <th scope="col" class="text-center">Stok Saat Ini</th>
+                                <th scope="col" class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Jika daftar kosong -->
+                            <tr th:if="${#lists.isEmpty(pendingList)}">
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Tidak ada permintaan peminjaman saat ini.
+                                </td>
+                            </tr>
+
+                            <!-- Jika daftar ada -->
+                            <tr th:each="detail : ${pendingList}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img th:src="${detail.item.cover}"
+                                             alt="Cover"
+                                             class="me-3"
+                                             style="width: 50px; height: 65px; object-fit: cover; border-radius: 4px;" />
+                                        <div>
+                                            <strong class="d-block" th:text="${detail.item.judul}">Judul Buku</strong>
+                                            <small class="text-muted" th:text="${detail.item.penulis}">Penulis</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td th:text="${detail.transaksi.username}">username_peminjam</td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary" th:text="${detail.item.stok}">0</span>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-success btn-sm"
+                                            th:data-id-item="${detail.item.idItem}"
+                                            th:data-username="${detail.transaksi.username}"
+                                            onclick="approveLoan(this.dataset.idItem, this.dataset.username)">
+                                             <i class="fas fa-check me-1"></i> ACC
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <!-- Tambahkan lebih banyak kartu peminjaman sesuai kebutuhan -->
-            </section>
+            </div>
         </div>
+    </div>
+</section>
 </body>
+</html>

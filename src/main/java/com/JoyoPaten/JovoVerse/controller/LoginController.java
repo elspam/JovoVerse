@@ -8,55 +8,41 @@ import org.springframework.ui.Model;
 
 import com.JoyoPaten.JovoVerse.model.admin;
 import com.JoyoPaten.JovoVerse.model.peminjam;
-import com.JoyoPaten.JovoVerse.model.user; // Sesuaikan nama repository
+import com.JoyoPaten.JovoVerse.model.user;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
     
-    private user user; // Inject repository
-    
     @GetMapping("/login")
     public String loginPage() {
-        return "Login"; // Ganti dengan nama file HTML login Anda
+        return "Login"; // Mengarahkan ke Login.html
     }
 
-
-   @GetMapping("/dashboard")
+    @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
-        // Cek apakah user sudah login
-        user user = (user) session.getAttribute("user");
-        if (user == null) {
+        user userInSession = (user) session.getAttribute("user");
+        if (userInSession == null) {
             return "redirect:/login";
         }
-        model.addAttribute("username", user.getUsername()); 
-        if (user.getRole() == 1) {
-            return "tambah-item";
-        } else {
-            return "home";
-        }
+        
+        // Cukup arahkan ke "home", logika tampilan menu diatur di dashboard.html
+        return "redirect:/home";
     }
 
-    @GetMapping("/home")
-    public String homePage() {
-        return "home";
-    }
-
-    @GetMapping("/register") // Tambahkan ini untuk halaman register
+    @GetMapping("/register")
     public String registerPage() {
-        return "register";
+        return "Register"; // Mengarahkan ke Register.html
     }
-    
 
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
                         HttpSession session) {
-        user u = user.findByUsername(username); // Ambil data dari DB
+        user u = user.findByUsername(username);
 
         if (u != null && u.getPassword().equals(password)) {
-            // Cek role, bikin instance sesuai role
             if (u.getRole() == 1) {
                 admin adminUser = new admin(u.getUsername(), u.getPassword());
                 session.setAttribute("user", adminUser);
@@ -64,23 +50,23 @@ public class LoginController {
                 peminjam peminjamUser = new peminjam(u.getUsername(), u.getPassword());
                 session.setAttribute("user", peminjamUser);
             }
-            return "redirect:/dashboard";
+            return "redirect:/home"; // Langsung ke /home setelah login berhasil
         }
 
-        return "redirect:/Login?error=true";
+        return "redirect:/login?error=true"; // Kembali ke login dengan notifikasi error
     }
 
     @PostMapping("/register")
-    public String registerPost(@RequestParam String username,@RequestParam String password) {
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+    public String registerPost(@RequestParam String username, @RequestParam String password) {
+        if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
             return "redirect:/register?error=empty";
         }
 
         if (user.findByUsername(username) == null) {
-            user.save(new user(username, password, 0));
-            return "redirect:/login?success=true"; // Registrasi berhasil, redirect ke login
+            user.save(new user(username, password, 0)); // Role 0 untuk peminjam
+            return "redirect:/login?success=true";
         } else {
-            return "redirect:/register?error=userexists"; // Username sudah digunakan
+            return "redirect:/register?error=userexists";
         }
     }
 }

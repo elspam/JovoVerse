@@ -65,30 +65,23 @@ public class peminjam extends user {
         try (Connection conn = JDBC.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            // Ambil tanggal hari ini
             LocalDate today = LocalDate.now();
-
-            // Ubah java.sql.Date (deadline) ke LocalDate
             LocalDate deadlineLocal = deadline.toLocalDate();
 
-            // Cek apakah hari ini adalah H-1 dari deadline
-            if (!today.equals(deadlineLocal.minusDays(1))) {
-                System.out.println("Perpanjangan hanya boleh dilakukan H-1 sebelum deadline!");
+            // Logika perpanjangan yang lebih fleksibel, tidak hanya H-1
+            if (today.isAfter(deadlineLocal.minusDays(2))) { // Contoh: Bisa diperpanjang mulai H-2
+                LocalDate newDeadline = deadlineLocal.plusDays(7);
+                Date sqlDeadline = Date.valueOf(newDeadline);
+
+                stmt.setDate(1, sqlDeadline);
+                stmt.setString(2, username);
+                stmt.setString(3, idItem);
+
+                return stmt.executeUpdate() > 0;
+            } else {
+                System.out.println("Perpanjangan hanya bisa dilakukan mendekati deadline!");
                 return false;
             }
-
-            // Tambahkan 7 hari ke deadline
-            LocalDate newDeadline = deadlineLocal.plusDays(7);
-
-            // Konversi kembali ke java.sql.Date
-            Date sqlDeadline = Date.valueOf(newDeadline);
-
-            // Lanjutkan update
-            stmt.setDate(1, sqlDeadline);
-            stmt.setString(2, username);
-            stmt.setString(3, idItem);
-
-            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard}">
+<head>
+    <title>Tambah Buku Baru</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container-fluid">
+        <h2 class="mb-4"><i class="fa-solid fa-book me-2"></i> Tambah Buku Baru</h2>
+        
+        <div id="notification" class="alert d-none" role="alert"></div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <form th:action="@{/items/buku}" method="post" enctype="multipart/form-data" id="addBukuForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="idItem" class="form-label">ID Item (e.g., B001)</label>
+                                <input type="text" class="form-control" id="idItem" name="idItem" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="judul" class="form-label">Judul Buku</label>
+                                <input type="text" class="form-control" id="judul" name="judul" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="penulis" class="form-label">Penulis</label>
+                                <input type="text" class="form-control" id="penulis" name="penulis" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="isbn" class="form-label">ISBN</label>
+                                <input type="text" class="form-control" id="isbn" name="isbn" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <label for="tahunTerbit" class="form-label">Tahun Terbit</label>
+                                    <input type="number" class="form-control" id="tahunTerbit" name="tahunTerbit" min="1900" th:max="${#dates.year(#dates.createNow()) + 1}" required>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label for="halaman" class="form-label">Jumlah Halaman</label>
+                                    <input type="number" class="form-control" id="halaman" name="halaman" min="1" required>
+                                </div>
+                            </div>
+                             <div class="mb-3">
+                                <label for="stok" class="form-label">Stok</label>
+                                <input type="number" class="form-control" id="stok" name="stok" min="0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cover" class="form-label">File Cover (Gambar)</label>
+                                <input type="file" class="form-control" id="cover" name="cover" accept="image/*" required>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn text-white" style="background-color: var(--primary-color);">
+                        <i class="fas fa-save me-2"></i>Simpan Buku
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script layout:fragment="scripts">
+        document.getElementById('addBukuForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah form submit standar
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const notification = document.getElementById('notification');
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                // Tampilkan notifikasi berdasarkan status response
+                if (response.ok) {
+                    notification.className = 'alert alert-success';
+                    form.reset(); // Kosongkan form jika berhasil
+                } else {
+                    notification.className = 'alert alert-danger';
+                }
+                return response.text(); // Ambil pesan dari body
+            })
+            .then(message => {
+                notification.textContent = message;
+                notification.classList.remove('d-none'); // Tampilkan notifikasi
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                notification.className = 'alert alert-danger';
+                notification.textContent = 'Terjadi kesalahan jaringan.';
+                notification.classList.remove('d-none');
+            });
+        });
+    </script>
+</section>
+</body>
+</html>

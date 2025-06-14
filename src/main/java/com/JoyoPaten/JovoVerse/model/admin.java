@@ -2,14 +2,18 @@ package com.JoyoPaten.JovoVerse.model;
 
 import com.JoyoPaten.JovoVerse.repository.JDBC;
 
-import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service
 public class admin extends user {
 
+    public admin() {
+        super();
+    }
     public admin(String username, String password) {
         super(username, password, 1); // 1 menandakan role admin
     }
@@ -18,7 +22,6 @@ public class admin extends user {
         try (Connection conn = JDBC.getConnection()) {
             conn.setAutoCommit(false);
 
-            // Insert into item_library
             String itemSql = "INSERT INTO item_library (id_item, judul, tahun_terbit, penulis, halaman, cover, stok) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(itemSql)) {
                 stmt.setString(1, item.getIdItem());
@@ -28,12 +31,9 @@ public class admin extends user {
                 stmt.setInt(5, item.getHalaman());
                 stmt.setString(6, item.getCover());
                 stmt.setInt(7, item.getStok());
-                stmt.setString(6, item.getCover());
-                stmt.setInt(7, item.getStok());
                 stmt.executeUpdate();
             }
 
-            // Insert ke tabel spesifik: buku / jurnal
             if (item instanceof Buku) {
                 String bukuSql = "INSERT INTO buku (id_item, isbn) VALUES (?, ?)";
                 try (PreparedStatement stmt = conn.prepareStatement(bukuSql)) {
@@ -44,17 +44,31 @@ public class admin extends user {
             } else if (item instanceof Jurnal) {
                 String jurnalSql = "INSERT INTO jurnal (id_item, issn, volume, no_edisi) VALUES (?, ?, ?, ?)";
                 try (PreparedStatement stmt = conn.prepareStatement(jurnalSql)) {
-                    stmt.setString(1, item.getIdItem());
-                    stmt.setString(2, ((Jurnal) item).getIssn());
-                    stmt.setInt(3, ((Jurnal) item).getVolume());
-                    stmt.setInt(4, ((Jurnal) item).getNoEdisi());
+                    Jurnal jurnal = (Jurnal) item;
+                    stmt.setString(1, jurnal.getIdItem());
+                    stmt.setString(2, jurnal.getIssn());
+                    stmt.setInt(3, jurnal.getVolume());
+                    stmt.setInt(4, jurnal.getNoEdisi());
                     stmt.executeUpdate();
                 }
             }
 
             conn.commit();
             return true;
+
         } catch (SQLException e) {
+            // Penanganan error yang lebih informatif
+            if (e.getErrorCode() == 1062) { // Kode error untuk duplicate entry
+                System.err.println("GAGAL MENYIMPAN: Data duplikat. Pesan Error: " + e.getMessage());
+                if (e.getMessage().contains("PRIMARY")) {
+                    // Memberikan pesan spesifik jika ID Item sudah ada
+                    // Pesan ini bisa diteruskan ke front-end
+                } else if (e.getMessage().contains("issn") || e.getMessage().contains("isbn")) {
+                    // Memberikan pesan spesifik jika ISSN atau ISBN sudah ada
+                }
+            } else {
+                System.err.println("SQL Error saat menyimpan item: " + e.getMessage());
+            }
             e.printStackTrace();
             return false;
         }
@@ -108,34 +122,33 @@ public class admin extends user {
         try (Connection conn = JDBC.getConnection()) {
             conn.setAutoCommit(false);
 
-            // Ambil info cover terlebih dahulu
-            itemLibrary item = findById(id);
-            String coverFilename = item != null ? item.getCover() : null;
-
-            // Hapus dari tabel buku/jurnal
-            try (PreparedStatement delBuku = conn.prepareStatement("DELETE FROM buku WHERE id_item = ?")) {
+            // Hapus dari tabel anak (buku/jurnal) terlebih dahulu untuk menghindari error foreign key
+            String delBukuSql = "DELETE FROM buku WHERE id_item = ?";
+            try (PreparedStatement delBuku = conn.prepareStatement(delBukuSql)) {
                 delBuku.setString(1, id);
                 delBuku.executeUpdate();
             }
-            try (PreparedStatement delJurnal = conn.prepareStatement("DELETE FROM jurnal WHERE id_item = ?")) {
+
+            String delJurnalSql = "DELETE FROM jurnal WHERE id_item = ?";
+            try (PreparedStatement delJurnal = conn.prepareStatement(delJurnalSql)) {
                 delJurnal.setString(1, id);
                 delJurnal.executeUpdate();
             }
-            try (PreparedStatement delItem = conn.prepareStatement("DELETE FROM item_library WHERE id_item = ?")) {
+
+            // Hapus dari tabel induk
+            String delItemSql = "DELETE FROM item_library WHERE id_item = ?";
+            try (PreparedStatement delItem = conn.prepareStatement(delItemSql)) {
                 delItem.setString(1, id);
-                delItem.executeUpdate();
-            }
-
-            conn.commit();
-
-            // Hapus file gambar
-            if (coverFilename != null) {
-                File coverFile = new File("uploads/covers/" + coverFilename);
-                if (coverFile.exists()) {
-                    coverFile.delete();
+                int rowsAffected = delItem.executeUpdate();
+                
+                // Jika tidak ada baris yang terhapus di tabel utama, berarti item tidak ada
+                if (rowsAffected == 0) {
+                    conn.rollback();
+                    return false;
                 }
             }
 
+            conn.commit();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -165,6 +178,46 @@ public class admin extends user {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public List<TransaksiDetail> findPendingTransaksiDetails() {
+        List<TransaksiDetail> details = new ArrayList<>();
+
+        String sql = "SELECT t.username, t.id_item, t.tanggalPinjam, t.tanggalKembali, t.deadline, t.denda, t.status " +
+                    "FROM transaksi t " +
+                    "WHERE t.status = 0";
+
+        try (Connection conn = JDBC.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Transaksi transaksi = new Transaksi(
+                    rs.getString("username"),
+                    rs.getString("id_item"),
+                    rs.getDate("tanggalPinjam"),
+                    rs.getDate("tanggalKembali"),
+                    rs.getDate("deadline"),
+                    rs.getInt("denda"),
+                    rs.getInt("status")
+                );
+                if (transaksi != null) {
+                    itemLibrary item = this.findById(transaksi.getIdItem());
+                    if (item != null) {
+                        TransaksiDetail detail = new TransaksiDetail(transaksi, item);
+                        details.add(detail);
+                    } else {
+                        System.err.println("ERROR: Item dengan ID " + transaksi.getIdItem() + " tidak ditemukan untuk transaksi pending.");
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("ERROR saat fetch transaksi pending:");
+            e.printStackTrace();
+        }
+
+        return details;
     }
 
     public boolean updateKembali(String username, String idItem, Date deadline) {
